@@ -1,0 +1,48 @@
+//
+// Created by harka on 29-06-2025.
+//
+
+#include "./game.h"
+
+int last_frame_time = 0;
+
+void process_input(int *game_state) {
+    SDL_Event event;
+    SDL_PollEvent(&event);
+
+    switch (event.type) {
+
+        case SDL_KEYDOWN:
+            if (event.key.keysym.sym == SDLK_ESCAPE) {
+                *game_state = FALSE;
+            }
+    }
+
+}
+
+void update() {
+    int delta_time = (int)SDL_GetTicks() - last_frame_time;
+    if (FRAME_TIME > delta_time) {
+        SDL_Delay(FRAME_TIME - delta_time);
+    }
+
+    update_tanks();
+    last_frame_time = (int)SDL_GetTicks();
+}
+
+void render(SDL_Renderer *renderer) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    draw_tank(renderer);
+    draw_surface(renderer);
+
+    SDL_RenderPresent(renderer);
+}
+
+void draw_surface(SDL_Renderer *renderer) {
+    SDL_Rect surface = {0, 502, 500, 198};
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(renderer, &surface);
+}
+

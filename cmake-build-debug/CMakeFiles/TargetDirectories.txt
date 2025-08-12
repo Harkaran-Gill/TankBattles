@@ -1,0 +1,3 @@
+C:/Users/harka/CLionProjects/TankWars/cmake-build-debug/CMakeFiles/TankWars.dir
+C:/Users/harka/CLionProjects/TankWars/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/harka/CLionProjects/TankWars/cmake-build-debug/CMakeFiles/rebuild_cache.dir
