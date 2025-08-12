@@ -7,12 +7,13 @@
 
 #define TRUE 1
 #define FALSE 0
-#define FRAMES 60
+#define FRAMES 120
 #define FRAME_TIME 1000/FRAMES
 
 #include <stdio.h>
 #include <SDL.h>
 #include "tank.h"
+#include "projectile.h"
 
 void process_input();
 void update();

@@ -16,6 +16,12 @@ void process_input(int *game_state) {
             if (event.key.keysym.sym == SDLK_ESCAPE) {
                 *game_state = FALSE;
             }
+            if (event.key.keysym.sym == SDLK_SPACE) {
+                float x = 0;
+                double angle = 0;
+                get_tank_pos_and_angle(&x , &angle);
+                create_projectile(x + 17, 475, angle);
+            }
     }
 
 }
@@ -27,7 +33,9 @@ void update() {
     }
 
     update_tanks();
+    update_projectiles((int)SDL_GetTicks() - last_frame_time);
     last_frame_time = (int)SDL_GetTicks();
+    destroy_projectiles();
 }
 
 void render(SDL_Renderer *renderer) {
@@ -36,6 +44,7 @@ void render(SDL_Renderer *renderer) {
 
     draw_tank(renderer);
     draw_surface(renderer);
+    draw_projectiles(renderer);
 
     SDL_RenderPresent(renderer);
 }

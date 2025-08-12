@@ -32,7 +32,7 @@ struct tires {
 void setup_tanks() {
     tank1.pos = 75.0f;
     tank1.health = 100;
-    tank1.angle = 0.5;
+    tank1.angle = 2.2;
     tank1.power = 30;
 
     wheel1.x = tank1.pos + 8;
@@ -58,13 +58,13 @@ void draw_tank(SDL_Renderer *renderer) {
     SDL_RenderFillRect(renderer, &body1);
 
     //drawing the cannon
-    SDL_Rect cannon = {(int) tank1.pos + 17, 475, 35, 5};
+    SDL_Rect cannons_rect = {(int) tank1.pos + 17, 475, 35, 5};
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     //SDL_RenderFillRect(renderer, &cannon);
 
 
-    int x2 = cannon.x - (int)(35 * cos(tank1.angle));
-    int y2 = cannon.y - (int)(35 * sin(tank1.angle));
+    int x2 = cannons_rect.x - (int)(35 * cos(tank1.angle));
+    int y2 = cannons_rect.y - (int)(35 * sin(tank1.angle));
     SDL_RenderDrawLine(renderer, (int)tank1.pos+17, 475, x2, y2);
 
 
@@ -92,7 +92,6 @@ void draw_tank(SDL_Renderer *renderer) {
             }
         }
     }
-
 }
 
 void update_tanks() {
@@ -118,5 +117,18 @@ void update_tanks() {
             tank1.angle += 0.5 * (double)FRAME_TIME/1000;
         }
     }
+/*
+    if (states[SDL_SCANCODE_SPACE]) {
+        printf("Spacebar pressed\n");
+        create_projectile();
+    }*/
+    cannon1.x = 17 + tank1.pos;
 }
+
+void get_tank_pos_and_angle(float* x, double* angle) {
+    *x = tank1.pos;
+    *angle = tank1.angle;
+}
+
+
 
