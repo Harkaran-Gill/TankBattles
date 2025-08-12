@@ -1,0 +1,10 @@
+#CLion Specifics
+.idea/
+.cmake-build-debug/
+
+#compiled files
+*.out
+*.exe
+*.o
+*.a
+*.so
