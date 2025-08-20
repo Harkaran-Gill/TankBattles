@@ -33,7 +33,7 @@ int initialize_SDL() {
         SDL_WINDOWPOS_CENTERED,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
-        0);
+        SDL_WINDOW_MAXIMIZED);
 
     if (!window) {
         fprintf(stderr, "Unable to Initialize Window\n");

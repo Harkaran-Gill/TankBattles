@@ -5,6 +5,7 @@
 #include "./game.h"
 
 int last_frame_time = 0;
+int last_projectile_shot_time = 0;
 
 void process_input(int *game_state) {
     SDL_Event event;
@@ -16,11 +17,13 @@ void process_input(int *game_state) {
             if (event.key.keysym.sym == SDLK_ESCAPE) {
                 *game_state = FALSE;
             }
-            if (event.key.keysym.sym == SDLK_SPACE) {
+            if (event.key.keysym.sym == SDLK_SPACE && (SDL_GetTicks() - last_projectile_shot_time) > 1000) {
                 float x = 0;
+                float y = 0;
                 double angle = 0;
-                get_tank_pos_and_angle(&x , &angle);
+                get_tank_pos_and_angle(&x , &y, &angle);
                 create_projectile(x + 17, 475, angle);
+                last_projectile_shot_time = (int) SDL_GetTicks();
             }
     }
 
@@ -50,7 +53,7 @@ void render(SDL_Renderer *renderer) {
 }
 
 void draw_surface(SDL_Renderer *renderer) {
-    SDL_Rect surface = {0, 502, 500, 198};
+    SDL_Rect surface = {0, 502, WINDOW_WIDTH, WINDOW_HEIGHT - 502};
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &surface);
 }

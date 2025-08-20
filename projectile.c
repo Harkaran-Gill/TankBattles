@@ -74,7 +74,7 @@ void destroy_projectiles() {
         if (projectiles[i] != NULL) {
             int cx = projectiles[i]->x;
             int cy = projectiles[i]->y;
-            if (cx < 0 || cx > 500 || cy < 0 || cy > 500) {
+            if (cx < 0 || cx > WINDOW_WIDTH || cy < 0 || cy > 500) {
                 free(projectiles[i]);
                 projectiles[i] = NULL;
             }
