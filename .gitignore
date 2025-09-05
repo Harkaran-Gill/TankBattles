@@ -1,6 +1,6 @@
 #CLion Specifics
 .idea/
-.cmake-build-debug/
+cmake-build-release/
 cmake-build-debug/
 
 #compiled files

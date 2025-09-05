@@ -12,8 +12,8 @@
 #include <SDL.h>
 #include "game.h"
 
-#define WINDOW_HEIGHT 1080
-#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH 1280
 
 int initialize_SDL();
 void destroy_window();

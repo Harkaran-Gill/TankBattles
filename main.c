@@ -11,12 +11,14 @@ int main(int argc, char* argv[]) {
         printf("Initialized everything");
     }
     setup_tanks();
-
+    int window_width;
+    int window_height;
 
     while (game_state) {
+        SDL_GetWindowSize(window, &window_width, &window_height);
         process_input(&game_state);
-        update();
-        render(renderer);
+        update(window_width, window_height);
+        render(renderer, window_width, window_height);
     }
     destroy_window();
     return 0;
@@ -33,7 +35,7 @@ int initialize_SDL() {
         SDL_WINDOWPOS_CENTERED,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
-        SDL_WINDOW_MAXIMIZED);
+        SDL_WINDOW_RESIZABLE);
 
     if (!window) {
         fprintf(stderr, "Unable to Initialize Window\n");

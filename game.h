@@ -16,8 +16,8 @@
 #include "projectile.h"
 
 void process_input();
-void update();
-void render(SDL_Renderer *renderer);
-void draw_surface(SDL_Renderer *renderer);
+void update(int width, int height);
+void render(SDL_Renderer *renderer, int width, int height);
+void draw_surface(SDL_Renderer *renderer, int window_width, int window_height);
 
 #endif //GAME_H

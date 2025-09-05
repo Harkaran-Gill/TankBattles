@@ -4,6 +4,7 @@
 
 #include "projectile.h"
 
+float proj_velocity = 100.0f;
 
 struct Projectile {
     float x;
@@ -11,7 +12,6 @@ struct Projectile {
     int r;
     float v_y;
     float v_x;
-    int is_active;
 };
 
 const int acceleration = 150;
@@ -24,12 +24,11 @@ void create_projectile(float tank_middle_pos, float tank_y, double angle) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (projectiles[i] == NULL) {
             struct Projectile *p = malloc(sizeof(struct Projectile));
-            p->x = tank_middle_pos - (int)(35 * cos(angle));
-            p->y = tank_y - (float)(35 * sin(angle));
+            p->x = tank_middle_pos - (35.0f * cos(angle));
+            p->y = tank_y - (35.0f * sin(angle));
             p->r = 3;
-            p->v_x = -200.0f * cos(angle);
-            p->v_y = -200.0f * sin(angle);
-            p->is_active = 1;
+            p->v_x = -proj_velocity * cos(angle);
+            p->v_y = -proj_velocity * sin(angle);
             projectiles[i] = p;
             break;
         }
@@ -52,8 +51,8 @@ void update_projectiles(int delta_time){
 void draw_projectiles(SDL_Renderer *renderer) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (projectiles[i] != NULL) {
-            int cx = projectiles[i]->x;
-            int cy = projectiles[i]->y;
+            int cx = (int)projectiles[i]->x;
+            int cy = (int)projectiles[i]->y;
             int r = projectiles[i]->r;
             for (int i = cx - r; i < cx + r; i++) {
                 for (int j = cy - r; j < cy + r; j++) {
@@ -69,12 +68,12 @@ void draw_projectiles(SDL_Renderer *renderer) {
     }
 }
 
-void destroy_projectiles() {
+void destroy_projectiles(int window_width) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (projectiles[i] != NULL) {
-            int cx = projectiles[i]->x;
-            int cy = projectiles[i]->y;
-            if (cx < 0 || cx > WINDOW_WIDTH || cy < 0 || cy > 500) {
+            int cx = (int)projectiles[i]->x;
+            int cy = (int)projectiles[i]->y;
+            if (cx < 0 || cx > window_width || cy < 0 || cy > 500) {
                 free(projectiles[i]);
                 projectiles[i] = NULL;
             }
