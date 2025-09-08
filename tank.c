@@ -24,83 +24,93 @@ struct Tank {
     float pos_x;
     float pos_y;
     int health;
-    double angle;
-    int power;
+    float angle;
+    float power;
     struct Cannon cannon;
     struct Wheel wheel[2];
 } tank1;
 
 
 void setup_tanks() {
-    tank1.pos_x = 75;
+    tank1.pos_x = 75;               // X-coordinate of Left most part of the tank's body
+    tank1.pos_y = 0.8f * 720 - 22.0f;       // Y-coordinate of Top of the tank's body
     tank1.health = 100;
-    tank1.angle = 2.2;
-    tank1.power = 30;
-    tank1.wheel[0] = (struct Wheel){tank1.pos_x + 5, 498, 5};
-    tank1.wheel[1] = (struct Wheel){tank1.pos_x + 27, 498, 5};
+    tank1.angle = 2.2f;
+    tank1.power = 0.3f;             // Power of the projectiles shot
+
+    tank1.wheel[0] = (struct Wheel){(int)tank1.pos_x + 5, (int)tank1.pos_y + 17, 5};
+    tank1.wheel[1] = (struct Wheel){(int)tank1.pos_x + 27, (int)tank1.pos_y + 17, 5}; // 498
 
     tank1.cannon.l = 35;
     tank1.cannon.x = (int) tank1.pos_x + cannon_offset + tank1.cannon.l;
-    tank1.cannon.y = 475;
+    tank1.cannon.y = (int)tank1.pos_y - 3;
     // 475 is in terms of pixels to determine height from ground, ignoring changeable height for now
 }
 
-
-void update_tanks(float frame_time, int window_width) {
+void update_tanks(float frame_time, int window_width, int window_height) {
     const Uint8 *states = SDL_GetKeyboardState(NULL);
-    if (states[SDL_SCANCODE_LEFT]) {
+    if (states[SDL_SCANCODE_A]) {
         if (tank1.pos_x > 0) {
             tank1.pos_x -= 130.0f * frame_time / 1000;
         }
     }
-    if (states[SDL_SCANCODE_RIGHT]) {
+    if (states[SDL_SCANCODE_D]) {
         if (tank1.pos_x < (float) window_width - 25) {
             tank1.pos_x += 130.0f * frame_time / 1000;
         }
     }
 
-    if (states[SDL_SCANCODE_UP]) {
+    if (states[SDL_SCANCODE_W]) {
         if (tank1.angle > 0) {
-            tank1.angle -= 0.5 * frame_time / 1000;
+            tank1.angle -= 0.5f * frame_time / 1000;
         }
     }
-    if (states[SDL_SCANCODE_DOWN]) {
+    if (states[SDL_SCANCODE_S]) {
         if (tank1.angle < PI) {
-            tank1.angle += 0.5 * frame_time / 1000;
+            tank1.angle += 0.5f * frame_time / 1000;
         }
     }
-    /*
-        if (states[SDL_SCANCODE_SPACE]) {
-            printf("Spacebar pressed\n");
-            create_projectile();
-        }*/
+    if (states[SDL_SCANCODE_Q]) {
+        if (tank1.power > 0.1f)
+            tank1.power -= 0.1f * frame_time / 1000;
+    }
+    if (states[SDL_SCANCODE_E]) {
+        if (tank1.power < 1.0f)
+            tank1.power += 0.1f * frame_time / 1000;
+    }
+    //printf("Power: %f\n", tank1.power);
+
     tank1.cannon.x = cannon_offset + (int) tank1.pos_x;
+    tank1.pos_y = (float)window_height * 0.8f - 22.0f;
+    tank1.wheel[0].x = (int)tank1.pos_x + 7;
+    tank1.wheel[1].x = (int)tank1.pos_x + 26;
+
+    tank1.wheel[0].y = (int)tank1.pos_y + 17;
+    tank1.wheel[1].y = (int)tank1.pos_y + 17;
+
 }
 
-
-int c = 0;
+void draw_power(SDL_Renderer *renderer) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_Rect power_bar = {20, 20, (int)(100*tank1.power), 10};
+    SDL_RenderFillRect(renderer, &power_bar);
+}
 
 void draw_tank(SDL_Renderer *renderer) {
     //drawing the main body
-    SDL_Rect body1 = {(int) tank1.pos_x, 482, tank_width, tank_height};
+    SDL_Rect body1 = {(int) tank1.pos_x, (int)tank1.pos_y, tank_width, tank_height}; //482
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &body1);
 
-    int x2 = tank1.cannon.x - (int) (35 * cos(tank1.angle));
-    int y2 = tank1.cannon.y - (int) (35 * sin(tank1.angle));
-    //SDL_RenderDrawLine(renderer, (int)tank1.pos_x + cannon_offset, 475, x2, y2);
+    int x2 = tank1.cannon.x - (int) (35 * cosf(tank1.angle));
+    int y2 = tank1.cannon.y - (int) (35 * sinf(tank1.angle));
+
     draw_cannon(renderer, (int) tank1.pos_x + cannon_offset, x2, tank1.cannon.y, y2);
 
+    draw_wheels(renderer, tank1.wheel[0].x, tank1.wheel[0].y, tank1.wheel[0].r);
 
-    int cx = tank1.pos_x + 7;
-    int cy = tank1.wheel[0].y;
-    int r = tank1.wheel[0].r;
-    draw_wheels(renderer, cx, cy, r);
+    draw_wheels(renderer, tank1.wheel[1].x, tank1.wheel[1].y, tank1.wheel[1].r);
 
-    cx = (int) tank1.pos_x + 26;
-    cy = tank1.wheel[1].y;
-    r = tank1.wheel[1].r;
-    draw_wheels(renderer, cx, cy, r);
 }
 
 void draw_cannon(SDL_Renderer *renderer, int x1, int x2, int y1, int y2) {
@@ -111,6 +121,7 @@ void draw_cannon(SDL_Renderer *renderer, int x1, int x2, int y1, int y2) {
     }
 }
 
+// My logic, works fine just a little more expensive on compute
 void draw_cannon1(SDL_Renderer *renderer, int x1, int x2, int y1, int y2) {
     for (int i = -2; i <= 2; ++i) {
         SDL_RenderDrawLine(renderer, x1 + (int) round(sin(i)), y1 + (int) round(cos(i)),
@@ -132,8 +143,9 @@ void draw_wheels(SDL_Renderer *renderer, int cx, int cy, int r) {
     }
 }
 
-void get_tank_pos_and_angle(float *x, float *y, double *angle) {
-    *x = tank1.pos_x;
+void get_tank_pos_and_angle(int *x, float *y, float *angle, float* power) {
+    *x = tank1.cannon.x;
     *y = (float) tank1.cannon.y;
     *angle = tank1.angle;
+    *power = tank1.power;
 }

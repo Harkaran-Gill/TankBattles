@@ -13,8 +13,8 @@
 
 #define MAX_PROJECTILES 100
 
-void create_projectile(float tank_middle_pos, float tank_y, double angle);
+void create_projectile(int tank_middle_pos, float tank_y, float angle, float power);
 void update_projectiles(int delta_time);
 void draw_projectiles();
-void destroy_projectiles(int window_width);
+void destroy_projectiles(int window_width, int surface_height);
 #endif //PROJECTILE_H

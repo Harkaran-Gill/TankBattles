@@ -4,7 +4,7 @@
 
 #include "projectile.h"
 
-float proj_velocity = 100.0f;
+float proj_velocity = 450.0f;
 
 struct Projectile {
     float x;
@@ -20,15 +20,16 @@ struct Projectile* projectiles[MAX_PROJECTILES] = {NULL};
 /**
  * Creating a projectile
  */
-void create_projectile(float tank_middle_pos, float tank_y, double angle) {
+void create_projectile(int tank_middle_pos, float tank_y, float angle, float power) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (projectiles[i] == NULL) {
             struct Projectile *p = malloc(sizeof(struct Projectile));
-            p->x = tank_middle_pos - (35.0f * cos(angle));
-            p->y = tank_y - (35.0f * sin(angle));
+            p->x = (float)tank_middle_pos - (35.0f * cosf(angle));
+            p->y = tank_y - (35.0f * sinf(angle));
             p->r = 3;
-            p->v_x = -proj_velocity * cos(angle);
-            p->v_y = -proj_velocity * sin(angle);
+            // Square root the function to counter the quadratic growth of the projectile's range
+            p->v_x = sqrtf(power) * -proj_velocity * cosf(angle);
+            p->v_y = sqrtf(power) * -proj_velocity * sinf(angle);
             projectiles[i] = p;
             break;
         }
@@ -38,22 +39,21 @@ void create_projectile(float tank_middle_pos, float tank_y, double angle) {
 void update_projectiles(int delta_time){
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (projectiles[i] != NULL) {
-            //struct Projectile *p = projectiles[i];
             //printf("old Projectile %f\n", projectiles[i]->x);
-            projectiles[i]->x += (float)delta_time/1000 * projectiles[i]->v_x;
+            projectiles[i]->x += (float)delta_time/1000.0f * projectiles[i]->v_x;
             //printf("new Projectile %.5f\n", (float)delta_time/1000);
-            projectiles[i]->y += (float)delta_time/1000 * projectiles[i]->v_y;
-            projectiles[i]->v_y += acceleration * (float)delta_time/1000;
+            projectiles[i]->y += (float)delta_time/1000.0f * projectiles[i]->v_y;
+            projectiles[i]->v_y += (float)acceleration * (float)delta_time/1000.0f;
         }
     }
 }
 
 void draw_projectiles(SDL_Renderer *renderer) {
-    for (int i = 0; i < MAX_PROJECTILES; i++) {
-        if (projectiles[i] != NULL) {
-            int cx = (int)projectiles[i]->x;
-            int cy = (int)projectiles[i]->y;
-            int r = projectiles[i]->r;
+    for (int k = 0; k < MAX_PROJECTILES; k++) {
+        if (projectiles[k] != NULL) {
+            int cx = (int)projectiles[k]->x;
+            int cy = (int)projectiles[k]->y;
+            int r = projectiles[k]->r;
             for (int i = cx - r; i < cx + r; i++) {
                 for (int j = cy - r; j < cy + r; j++) {
                     int ci = i - cx;
@@ -68,12 +68,12 @@ void draw_projectiles(SDL_Renderer *renderer) {
     }
 }
 
-void destroy_projectiles(int window_width) {
+void destroy_projectiles(int window_width, int surface_height) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (projectiles[i] != NULL) {
             int cx = (int)projectiles[i]->x;
             int cy = (int)projectiles[i]->y;
-            if (cx < 0 || cx > window_width || cy < 0 || cy > 500) {
+            if (cx < 0 || cx > window_width || cy < 0 || cy > surface_height) {
                 free(projectiles[i]);
                 projectiles[i] = NULL;
             }
